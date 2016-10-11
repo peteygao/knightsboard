@@ -1,6 +1,6 @@
 defmodule LevelOneTest do
   use ExUnit.Case
-  doctest LevelOne
+  doctest KnightsBoard.LevelOne
 
   test "the truth" do
     assert 1 + 1 = 2

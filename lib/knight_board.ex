@@ -1,2 +1,0 @@
-defmodule KnightBoard do
-end

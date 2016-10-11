@@ -1,6 +1,6 @@
 defmodule CellTest do
   use ExUnit.Case
-  doctest Cell
+  doctest KnightsBoard.Cell
 
   test "the truth" do
     assert 1 + 1 = 2

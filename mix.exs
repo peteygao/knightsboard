@@ -1,8 +1,8 @@
-defmodule KnightBoard.Mixfile do
+defmodule KnightsBoards.Mixfile do
   use Mix.Project
 
   def project do
-    [app: :knight_board,
+    [app: :knights_board,
      version: "0.1.0",
      elixir: "~> 1.3",
      escript: escript_config,
@@ -32,6 +32,6 @@ defmodule KnightBoard.Mixfile do
   end
 
   defp escript_config do
-    [main_module: KnightBoard.CLI]
+    [main_module: KnightsBoard.CLI]
   end
 end

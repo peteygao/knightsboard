@@ -1,0 +1,2 @@
+defmodule KnightsBoard do
+end

@@ -1,10 +1,10 @@
-defmodule KnightBoard.CLI do
+defmodule KnightsBoard.CLI do
   @help_message """
   Knight's Board Parallel Solver
 
   This is a parallel solver for the Knight's Board problem, with a total of 5 levels.
 
-  All solutions with the exception of Level 1 is non-deterministic. Which means that the path returned may be different everytime the application is invoked, but the path will always satisfy the constraint (e.g. shortest, longest, or any). The reason for this behaviour is because the solver runs in parallel, the first solution that satisfies the constraint will be returned, and there's no guarantee the path will be the same everytime.
+  All solutions with the exception of Level 1 is non-deterministic. Which means that the path returned may be different every time the application is invoked, but the path will always satisfy the constraint (e.g. shortest, longest, or any valid path). The reason for this behaviour is because the solver runs in parallel, the first solution that satisfies the constraint will be returned, and there's no guarantee the same path will be found first every run.
 
   --level -l\tLevel of the Knight's Board to solve for:
             \t Level 1:
@@ -22,11 +22,12 @@ defmodule KnightBoard.CLI do
             \tTo specify start/end grids, use the format:
             \t  3,2:4,4
             \tWhere 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid
-            \t Special Rules for Level 1:
+
+            \tSpecial Rules for Level 1:
             \tA chain of moves can be given in the same format, with each move being colon delimited:
             \t  3,2:4,4:5,6
 
-  --help -h \t This help message
+  --help -h \tThis help message
   """
   @doc """
   Main entry point of the program
@@ -70,7 +71,8 @@ defmodule KnightBoard.CLI do
 
     case level do
       1 ->
-        KnightBoard.LevelOne.solve(moves)
+        import KnightsBoard.LevelOne
+        solve(moves)
     end
   end
   defp initialize_board(_, _) do

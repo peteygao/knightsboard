@@ -1,4 +1,4 @@
-defmodule KnightBoard.LevelOne do
+defmodule KnightsBoard.LevelOne do
   @moduledoc """
   Accepts a sequence of moves and reports whether the sequence contains only valid knight moves.
   Also print the state of the knight board to the terminal after each move. The current position is marked with a 'K'.
