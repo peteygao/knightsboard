@@ -32,6 +32,6 @@ defmodule KnightBoard.Mixfile do
   end
 
   defp escript_config do
-    [main_module: KnightBoard]
+    [main_module: KnightBoard.CLI]
   end
 end
