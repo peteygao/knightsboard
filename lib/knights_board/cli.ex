@@ -131,7 +131,7 @@ defmodule KnightsBoard.CLI do
       String.to_integer level
     catch
       _, _ ->
-        IO.puts "Invalid parameter for --level. It was not a number."
+        IO.puts "Invalid parameter for --level. It was not an integer."
         exit {:shutdown, 1}
     end
   end
