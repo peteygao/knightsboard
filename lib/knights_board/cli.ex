@@ -10,9 +10,9 @@ defmodule KnightsBoard.CLI do
             \t Level 1:
             \t  Test if all the --moves parameter are a valid string of Knight moves
             \t Level 2:
-            \t  Returns any path from start to end coordinates (if possible). Highly likely be the shortest by virtue of the fact that shortest paths computes the fastest.
+            \t  Returns any path from start to end coordinates. Highly likely be the shortest by virtue of the fact that shortest paths computes the fastest.
             \t Level 3:
-            \t  Returns a shortest path from start to end (if possible)
+            \t  Returns a shortest path from start to end
             \t Level 4:
             \t  Returns a shortest path from start to end on a special 32x32 board (type --board to see it rendered)
             \t Level 5:
