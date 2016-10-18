@@ -21,7 +21,12 @@ defmodule KnightsBoard.LevelOne do
   @spec solve(nonempty_list(nonempty_list(String.t))) :: { atom }
 
   def solve([[x,y]]) when x < 1 or x > 8 or y < 1 or y > 8 do
-    IO.puts ["Invalid move: ", Integer.to_string(x), ", ", Integer.to_string(y)]
+    IO.puts ["Invalid move: ", [x, y] |> Enum.join(", ")]
+  end
+
+  def solve [[x, y]] do
+    print_board x, y
+    IO.puts "All moves are valid"
   end
 
   def solve [[x,y]|rest] do
@@ -59,9 +64,9 @@ defmodule KnightsBoard.LevelOne do
   defp print_board x, y do
     ix = x - 1
     iy = y - 1
-    board = List.replace_at(@board, 8 * iy + ix, " K ")
-    IO.puts "Coordinate: #{Integer.to_string(x)}, #{Integer.to_string(y)}"
+    board = List.replace_at @board, 8 * iy + ix, " K "
+
+    IO.puts ["Move: ", [x, y] |> Enum.join(", ")]
     IO.puts board
-    IO.puts ""
   end
 end
