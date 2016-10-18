@@ -14,9 +14,9 @@ defmodule KnightsBoard.CLI do
             \t Level 3:
             \t  Returns a shortest path from start to end (if possible)
             \t Level 4:
-            \t  Returns a shortest path from start to end on a specific map (type --map to see it rendered)
+            \t  Returns a shortest path from start to end on a special 32x32 board (type --board to see it rendered)
             \t Level 5:
-            \t  Returns the longest path from start to end on the level 4 board.
+            \t  Returns the longest path from start to end on the level 4 board
 
   --moves -m\tMove set of the knight (level 1 has special rules, see below)
             \tTo specify start/end grids, use the format:
@@ -27,8 +27,50 @@ defmodule KnightsBoard.CLI do
             \tA chain of moves can be given in the same format, with each move being colon delimited:
             \t  3,2:4,4:5,6
 
+  --board -b\tShows the board used for level 4 and 5
+
   --help -h \tThis help message
   """
+
+  @board """
+  **** Special board rules (for level 4 and 5) ****
+
+  1) W[ater] squares count as two moves when a piece lands there
+  2) R[ock] squares cannot be used
+  3) B[arrier] squares cannot be used AND cannot lie in the path
+  4) T[eleport] squares instantly move you from one T to the other in the same move
+  5) L[ava] squares count as five moves when a piece lands there
+
+  . . . . . . . . B . . . L L L . . . . . . . . . . . . . . . . .
+  . . . . . . . . B . . . L L L . . . . . . . . . . . . . . . . .
+  . . . . . . . . B . . . L L L . . . L L L . . . . . . . . . . .
+  . . . . . . . . B . . . L L L . . L L L . . . R R . . . . . . .
+  . . . . . . . . B . . . L L L L L L L L . . . R R . . . . . . .
+  . . . . . . . . B . . . L L L L L L . . . . . . . . . . . . . .
+  . . . . . . . . B . . . . . . . . . . . . R R . . . . . . . . .
+  . . . . . . . . B B . . . . . . . . . . . R R . . . . . . . . .
+  . . . . . . . . W B B . . . . . . . . . . . . . . . . . . . . .
+  . . . R R . . . W W B B B B B B B B B B . . . . . . . . . . . .
+  . . . R R . . . W W . . . . . . . . . B . . . . . . . . . . . .
+  . . . . . . . . W W . . . . . . . . . B . . . . . . T . . . . .
+  . . . W W W W W W W . . . . . . . . . B . . . . . . . . . . . .
+  . . . W W W W W W W . . . . . . . . . B . . R R . . . . . . . .
+  . . . W W . . . . . . . . . . B B B B B . . R R . W W W W W W W
+  . . . W W . . . . . . . . . . B . . . . . . . . . W . . . . . .
+  W W W W . . . . . . . . . . . B . . . W W W W W W W . . . . . .
+  . . . W W W W W W W . . . . . B . . . . . . . . . . . . B B B B
+  . . . W W W W W W W . . . . . B B B . . . . . . . . . . B . . .
+  . . . W W W W W W W . . . . . . . B W W W W W W B B B B B . . .
+  . . . W W W W W W W . . . . . . . B W W W W W W B . . . . . . .
+  . . . . . . . . . . . B B B . . . . . . . . . . B B . . . . . .
+  . . . . . R R . . . . B . . . . . . . . . . . . . B . . . . . .
+  . . . . . R R . . . . B . . . . . . . . . . . . . B . T . . . .
+  . . . . . . . . . . . B . . . . . R R . . . . . . B . . . . . .
+  . . . . . . . . . . . B . . . . . R R . . . . . . . . . . . . .
+  . . . . . . . . . . . B . . . . . . . . . . R R . . . . . . . .
+  . . . . . . . . . . . B . . . . . . . . . . R R . . . . . . . .
+  """
+
   @doc """
   Main entry point of the program
   """
@@ -38,15 +80,20 @@ defmodule KnightsBoard.CLI do
     {options, _, _} =
       OptionParser.parse(args,
         aliases: [
+          b: :board,
           h: :help,
           l: :level,
           m: :moves,
         ]
       )
 
+    options_map = Enum.into(options, %{})
+
     cond do
       Keyword.has_key?(options, :help) ->
         IO.puts @help_message
+      Keyword.has_key?(options, :board) ->
+        IO.puts @board
       Keyword.has_key?(options, :level) and Keyword.has_key?(options, :moves) ->
         initialize_board(
           parse_level(options[:level]),
