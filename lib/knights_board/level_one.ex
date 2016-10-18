@@ -22,11 +22,12 @@ defmodule KnightsBoard.LevelOne do
 
   def solve([[x,y]]) when x < 1 or x > 8 or y < 1 or y > 8 do
     IO.puts ["Invalid move: ", [x, y] |> Enum.join(", ")]
+    :error
   end
 
   def solve [[x, y]] do
     print_board x, y
-    IO.puts "All moves are valid"
+    IO.puts "All moves are valid."
   end
 
   def solve [[x,y]|rest] do
@@ -58,6 +59,7 @@ defmodule KnightsBoard.LevelOne do
       true ->
         print_board x, y
         IO.puts ["Next move is invalid: ", List.first(rest) |> Enum.join(", ")]
+        :error
     end
   end
 
