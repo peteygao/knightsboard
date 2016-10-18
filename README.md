@@ -41,20 +41,60 @@ Some example invocations:
              Level 3:
               Returns a shortest path from start to end (if possible)
              Level 4:
-              Returns a shortest path from start to end on a specific map (type --map to see it rendered)
+              Returns a shortest path from start to end on a special 32x32 (see --board)
              Level 5:
               Returns the longest path from start to end on the level 4 board
 
 --moves -m  Move set of the knight (level 1 has special rules, see below)
             To specify start/end grids, use the format:
               3,2:4,4
-            Where 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid. Levels 1 - 3 are 8x8 large. Levels 4 and 5 are 32x32
+            Where 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid
+
+            Board dimensions for levels 1 - 3 are 8x8. Levels 4 and 5 are 32x32 (see --board)
 
             Special Rules for Level 1:
             A chain of moves can be given in the same format, with each move being colon delimited:
               3,2:4,4:5,6
 
---board -b  Shows the board used for level 4 and 5
+--board -b  Shows the 32x32 board used for level 4 and 5
 
 --help -h   This help message
+```
+
+### Special board for level 4 and 5
+```
+1) W[ater] squares count as two moves when a piece lands there
+2) R[ock] squares cannot be used
+3) B[arrier] squares cannot be used AND cannot lie in the path
+4) T[eleport] squares instantly move you from one T to the other in the same move
+5) L[ava] squares count as five moves when a piece lands there
+
+. . . . . . . . B . . . L L L . . . . . . . . . . . . . . . . .
+. . . . . . . . B . . . L L L . . . . . . . . . . . . . . . . .
+. . . . . . . . B . . . L L L . . . L L L . . . . . . . . . . .
+. . . . . . . . B . . . L L L . . L L L . . . R R . . . . . . .
+. . . . . . . . B . . . L L L L L L L L . . . R R . . . . . . .
+. . . . . . . . B . . . L L L L L L . . . . . . . . . . . . . .
+. . . . . . . . B . . . . . . . . . . . . R R . . . . . . . . .
+. . . . . . . . B B . . . . . . . . . . . R R . . . . . . . . .
+. . . . . . . . W B B . . . . . . . . . . . . . . . . . . . . .
+. . . R R . . . W W B B B B B B B B B B . . . . . . . . . . . .
+. . . R R . . . W W . . . . . . . . . B . . . . . . . . . . . .
+. . . . . . . . W W . . . . . . . . . B . . . . . . T . . . . .
+. . . W W W W W W W . . . . . . . . . B . . . . . . . . . . . .
+. . . W W W W W W W . . . . . . . . . B . . R R . . . . . . . .
+. . . W W . . . . . . . . . . B B B B B . . R R . W W W W W W W
+. . . W W . . . . . . . . . . B . . . . . . . . . W . . . . . .
+W W W W . . . . . . . . . . . B . . . W W W W W W W . . . . . .
+. . . W W W W W W W . . . . . B . . . . . . . . . . . . B B B B
+. . . W W W W W W W . . . . . B B B . . . . . . . . . . B . . .
+. . . W W W W W W W . . . . . . . B W W W W W W B B B B B . . .
+. . . W W W W W W W . . . . . . . B W W W W W W B . . . . . . .
+. . . . . . . . . . . B B B . . . . . . . . . . B B . . . . . .
+. . . . . R R . . . . B . . . . . . . . . . . . . B . . . . . .
+. . . . . R R . . . . B . . . . . . . . . . . . . B . T . . . .
+. . . . . . . . . . . B . . . . . R R . . . . . . B . . . . . .
+. . . . . . . . . . . B . . . . . R R . . . . . . . . . . . . .
+. . . . . . . . . . . B . . . . . . . . . . R R . . . . . . . .
+. . . . . . . . . . . B . . . . . . . . . . R R . . . . . . . .
 ```

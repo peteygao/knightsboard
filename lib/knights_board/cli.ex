@@ -4,7 +4,7 @@ defmodule KnightsBoard.CLI do
 
   This is a parallel solver for the Knight's Board problem, with a total of 5 levels.
 
-  All solutions with the exception of Level 1 is non-deterministic. Which means that the path returned may be different every time the application is invoked, but the path will always satisfy the constraint (e.g. shortest, longest, or any valid path). The reason for this behaviour is because the solver runs in parallel, the first solution that satisfies the constraint will be returned, and there's no guarantee the same path will be found first every run.
+  All solutions with the exception of Level 1 are non-deterministic. Which means that the path returned may be different every time the application is invoked, but the path will always satisfy the constraint (e.g. shortest, longest, or any valid path). The reason for this behaviour is because the solver runs in parallel, the first solution that satisfies the constraint will be returned, and there's no guarantee the same path will be found first every run.
 
   --level -l\tLevel of the Knight's Board to solve for:
             \t Level 1:
@@ -14,7 +14,7 @@ defmodule KnightsBoard.CLI do
             \t Level 3:
             \t  Returns a shortest path from start to end
             \t Level 4:
-            \t  Returns a shortest path from start to end on a special 32x32 board (type --board to see it rendered)
+            \t  Returns a shortest path from start to end on a special 32x32 board (see --board)
             \t Level 5:
             \t  Returns the longest path from start to end on the level 4 board
 
@@ -23,11 +23,13 @@ defmodule KnightsBoard.CLI do
             \t  3,2:4,4
             \tWhere 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid
 
+            \tBoard dimensions for levels 1 - 3 are 8x8. Levels 4 and 5 are 32x32 (see --board)
+
             \tSpecial Rules for Level 1:
             \tA chain of moves can be given in the same format, with each move being colon delimited:
             \t  3,2:4,4:5,6
 
-  --board -b\tShows the board used for level 4 and 5
+  --board -b\tShows the 32x32 board used for level 4 and 5
 
   --help -h \tThis help message
   """
