@@ -89,21 +89,21 @@ defmodule KnightsBoard.CLI do
 
     options_map = Enum.into(options, %{})
 
-    cond do
-      Keyword.has_key?(options, :help) ->
+    case options_map do
+      %{help: _} ->
         IO.puts @help_message
-      Keyword.has_key?(options, :board) ->
+      %{board: _} ->
         IO.puts @board
-      Keyword.has_key?(options, :level) and Keyword.has_key?(options, :moves) ->
+      %{level: level, moves: moves} ->
         initialize_board(
-          parse_level(options[:level]),
-          parse_moves(options[:moves])
+          parse_level(level),
+          parse_moves(moves)
         )
-      Keyword.has_key?(options, :level) ->
+      %{level: _} ->
         IO.puts "No --moves provided."
-      Keyword.has_key?(options, :moves) ->
+      %{moves: _} ->
         IO.puts "No --level provided."
-      true ->
+      _ ->
         IO.puts "No --moves provided, and no --level was selected."
     end
   end
