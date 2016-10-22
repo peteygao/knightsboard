@@ -33,9 +33,9 @@ defmodule KnightsBoard.Board do
   def handle_cast {:solve, start_cell, end_cell}, state do
     IO.puts [
       "Starting to solve a path from ",
-      start_cell |> Enum.join(", "),
+      start_cell |> Enum.join(","),
       " to ",
-      end_cell |> Enum.join(", "),
+      end_cell |> Enum.join(","),
       "... (this may take a while)",
     ]
 
@@ -45,21 +45,35 @@ defmodule KnightsBoard.Board do
     start_cell_atom = start_cell |> Enum.join("x") |> String.to_atom
     :ok = GenServer.cast start_cell_atom, {:solve, %{cost: 0, moves: []}}
 
-    new_trace_count = state[:traces] + 1
-    new_state       = Map.put state, :traces, new_trace_count
-
-    {:noreply, new_state}
+    {:noreply, state}
   end
 
-  def handle_cast {:trace_complete, end_cell, %{cost: _, moves: moves}}, state do
-    if state[:trace] > 1 and not end_cell do
-      new_trace_count = state[:trace] - 1
-      new_state       = Map.put state, :traces, new_trace_count
-      {:noreply, new_state}
-    else
-      IO.inspect moves
-      IO.puts "Done!"
-      exit(:normal)
+  def handle_cast {:trace_complete, %{cost: _, moves: moves}}, state do
+    cond do
+      state[:traces] > 0 ->
+        new_trace_count = state[:traces] - 1
+        new_state       = Map.put state, :traces, new_trace_count
+        {:noreply, new_state}
+      true ->
+        IO.inspect moves
+        IO.puts "Done! (trace complete)"
+        exit(:normal)
     end
+  end
+
+  def handle_call :increment_trace, _from, state do
+    new_trace_count = state[:traces] + 1
+    new_state       = Map.put state, :traces, new_trace_count
+    {:reply, :ok, new_state}
+  end
+
+  def handle_call {:solved, %{cost: _, moves: moves}}, _from, _state do
+    IO.puts moves |> Enum.reverse |> Enum.join(":")
+    IO.puts "Done!"
+    exit(:normal)
+  end
+
+  def terminate reason, _state do
+    IO.inspect reason
   end
 end

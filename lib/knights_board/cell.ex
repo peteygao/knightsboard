@@ -22,35 +22,31 @@ defmodule KnightsBoard.Cell do
     {:ok, state}
   end
 
-  def handle_cast(
-    {:solve, %{cost: _, moves: moves}},
-    %{coordinate: coord})
-  when
-    coord in moves
-  do
-    GenServer.cast(:trace_complete, new_steps)
-  end
-
-
   def handle_cast {:solve, %{cost: cost, moves: moves}}, state do
+    :ok = GenServer.call :board, :increment_trace
     new_moves = [state[:coordinate]|moves]
     new_cost  = cost + cell_type_cost(state[:cell_type])
     new_steps = %{cost: new_cost, moves: new_moves}
 
-    if not state[:end_cell] do
-      if state[:cell_type] == "T" do
-        GenServer.cast :board, {:teleport, new_steps}
-      else
-        state[:neighbours]
-        |> Enum.each(fn neighbour ->
-          GenServer.cast neighbour, {:solve, new_steps}
-        end)
-      end
-    else
-      GenServer.cast :board, {:solved, new_steps}
+    cond do
+      state[:coordinate] in moves ->
+        GenServer.cast :board, {:trace_complete, new_steps}
+      not state[:end_cell] ->
+        if state[:cell_type] == "T" do
+          GenServer.cast :board, {:teleport, new_steps}
+        else
+          state[:neighbours]
+          |> Enum.each(fn neighbour ->
+            GenServer.cast neighbour, {:solve, new_steps}
+          end)
+        end
+        GenServer.cast :board, {:trace_complete, new_steps}
+      state[:end_cell] ->
+        GenServer.call :board, {:solved, new_steps}
+      true ->
+        # YOLO
     end
 
-    GenServer.cast(:trace_complete, new_steps)
     {:noreply, state}
   end
 

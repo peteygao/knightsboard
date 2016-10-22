@@ -111,6 +111,7 @@ defmodule KnightsBoard.CLI do
   end
 
   defp initialize_board(level, moves) when is_list(moves) do
+    IO.puts :"" # Without this random puts, board.ex GenServer will crash when attempting to IO.puts any :atom value
     init_message = """
     Game board initialized.
     Level: #{level}
