@@ -50,27 +50,33 @@ defmodule KnightsBoard.Board do
 
   def handle_cast {:trace_complete, %{cost: _, moves: moves}}, state do
     cond do
-      state[:traces] > 0 ->
+      state[:traces] > 1 ->
         new_trace_count = state[:traces] - 1
         new_state       = Map.put state, :traces, new_trace_count
         {:noreply, new_state}
       true ->
-        IO.inspect moves
+        IO.puts "***"
+        IO.puts state[:solutions] |> List.first |> Enum.reverse |> Enum.join(":")
         IO.puts "Done! (trace complete)"
         exit(:normal)
     end
+  end
+
+  def handle_cast {:solved, %{cost: _, moves: moves}}, state do
+    new_trace_count = state[:traces] - 1
+
+    new_state =
+      state
+      |> Map.put(:solutions, [moves|state[:solutions]])
+      |> Map.put(:traces, new_trace_count)
+
+    {:noreply, new_state}
   end
 
   def handle_call :increment_trace, _from, state do
     new_trace_count = state[:traces] + 1
     new_state       = Map.put state, :traces, new_trace_count
     {:reply, :ok, new_state}
-  end
-
-  def handle_call {:solved, %{cost: _, moves: moves}}, _from, _state do
-    IO.puts moves |> Enum.reverse |> Enum.join(":")
-    IO.puts "Done!"
-    exit(:normal)
   end
 
   def terminate reason, _state do

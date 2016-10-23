@@ -33,5 +33,7 @@ defmodule KnightsBoard.LevelTwo do
     {:ok, board} = KnightsBoard.Board.start_link @board
 
     GenServer.cast board, {:solve, start_cell, end_cell}
+
+    Process.sleep :infinity
   end
 end
