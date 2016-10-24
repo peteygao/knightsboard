@@ -48,7 +48,7 @@ defmodule KnightsBoard.Board do
       start_cell |> Enum.join(","),
       " to ",
       end_cell |> Enum.join(","),
-      "... (this may take a while)",
+      "...",
     ]
 
     end_cell_atom = end_cell |> Enum.join("x") |> String.to_atom
@@ -71,7 +71,7 @@ defmodule KnightsBoard.Board do
         IO.puts state[:solution] |> Enum.reverse |> Enum.join(":")
         state[:cells]
         |> Enum.each(fn cell -> GenServer.stop(cell) end)
-        IO.puts "Done! (trace complete)"
+        IO.puts "Done! (Ctrl+C to exit)"
         GenServer.stop(:board)
       true ->
         new_state = state |> decrement_trace

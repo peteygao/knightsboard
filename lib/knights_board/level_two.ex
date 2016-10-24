@@ -63,81 +63,67 @@ defmodule KnightsBoard.LevelTwo do
   end
 
   defp cell_propagation_logic(
-    %{cost: cost, moves: moves} = _steps,
+    steps,
     %{
-      coordinate: coordinate,
       end_cell:   end_cell,
-    } = _cell_state)
+    } = cell_state)
   when
     end_cell == true
   do
-    new_cost  = cost + 1
-    new_moves = [coordinate|moves]
-    new_steps = %{cost: new_cost, moves: new_moves}
+    new_steps = new_steps_from steps, cell_state
 
     GenServer.cast :board, {:solved, new_steps}
 
-    %{least_cost: new_cost, most_cost: nil}
+    %{least_cost: new_steps[:cost], most_cost: nil}
   end
 
   defp cell_propagation_logic(
-    %{cost: cost, moves: moves} = _steps,
+    %{cost: _cost, moves: moves} = steps,
     %{
       coordinate: coordinate,
       least_cost: least_cost,
       neighbours: neighbours,
-    } = _cell_state)
+    } = cell_state)
   when
     is_nil(least_cost)
   do
-    new_cost  = cost + 1
-    new_moves = [coordinate|moves]
-    new_steps = %{cost: new_cost, moves: new_moves}
+    new_steps = new_steps_from steps, cell_state
 
     cond do
       coordinate in moves ->
         GenServer.cast :board, {:trace_complete}
       true ->
-        neighbours
-        |> Enum.each(fn neighbour ->
-          GenServer.cast neighbour, {:solve, new_steps}
-        end)
+        cast_to_neighbours neighbours
 
         GenServer.cast :board, {:trace_complete}
     end
 
-    %{least_cost: new_cost, most_cost: nil}
+    %{least_cost: new_steps[:cost], most_cost: nil}
   end
 
   defp cell_propagation_logic(
-    %{cost: cost, moves: moves} = _steps,
+    %{cost: cost, moves: moves} = steps,
     %{
       coordinate: coordinate,
       least_cost: least_cost,
       neighbours: neighbours,
-    } = _cell_state)
+    } = cell_state)
   when
     not is_nil(least_cost)
   and
     cost < least_cost
   do
-    new_cost  = cost + 1
-    new_moves = [coordinate|moves]
-    new_steps = %{cost: new_cost, moves: new_moves}
+    new_steps = new_steps_from steps, cell_state
 
     cond do
       coordinate in moves ->
         GenServer.cast :board, {:trace_complete}
       true ->
-        neighbours
-        |> Enum.each(fn neighbour ->
-          GenServer.cast neighbour, {:solve, new_steps}
-        end)
-
+        cast_to_neighbours neighbours
         GenServer.cast :board, {:trace_complete}
     end
 
-    %{least_cost: new_cost, most_cost: nil}
+    %{least_cost: new_steps[:cost], most_cost: nil}
   end
 
   defp cell_propagation_logic(
@@ -148,5 +134,18 @@ defmodule KnightsBoard.LevelTwo do
   do
     GenServer.cast :board, {:trace_complete}
     %{least_cost: least_cost, most_cost: nil}
+  end
+
+  defp new_steps_from %{cost: cost, moves: moves}, %{coordinate: coordinate} do
+    new_cost  = cost + 1
+    new_moves = [coordinate|moves]
+    %{cost: new_cost, moves: new_moves}
+  end
+
+  defp cast_to_neighbours neighbours do
+    neighbours
+    |> Enum.each(fn neighbour ->
+      GenServer.cast neighbour, {:solve, new_steps}
+    end)
   end
 end
