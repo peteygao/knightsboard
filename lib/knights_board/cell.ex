@@ -1,71 +1,36 @@
 defmodule KnightsBoard.Cell do
   use GenServer
 
-  def start_link x, y, cell_type do
+  def start_link x, y, cell_type, cell_propagation_logic do
     GenServer.start_link(
       __MODULE__,
-      [x, y, cell_type],
+      [x, y, cell_type, cell_propagation_logic],
       name: [x, y] |> to_coord_atom
     )
   end
 
-  def init [x, y, cell_type] do
+  def init [x, y, cell_type, cell_propagation_logic] do
     state = %{
       coordinate: [x, y] |> to_coord_atom,
       neighbours: get_neighbours(x, y, cell_type),
       cell_type:  cell_type,
-      most_cost:  nil,
       least_cost: nil,
+      most_cost:  nil,
       end_cell:   false,
+      cell_propagation_logic: cell_propagation_logic,
     }
 
     {:ok, state}
   end
 
-  def handle_cast(
-    {:solve, %{cost: cost, moves: moves}},
-    %{
-      least_cost: least_cost,
-      coordinate: coordinate,
-      end_cell:   end_cell,
-      cell_type:  cell_type,
-      neighbours: neighbours,
-    } = state)
-  do
-    :ok = GenServer.call :board, :increment_trace
-    new_moves = [coordinate|moves]
-    new_cost  = cost + cell_type_cost(cell_type)
-    new_steps = %{cost: new_cost, moves: new_moves}
+  def handle_cast({:solve, steps}, %{cell_propagation_logic: cell_propagation_logic} = state) do
+    GenServer.cast :board, :increment_trace
 
-    new_state = if new_cost < least_cost or least_cost == nil and not end_cell do
-      new_state = Map.put state, :least_cost, new_cost
+    %{least_cost: least_cost, most_cost: most_cost} = cell_propagation_logic.(steps, state)
 
-      cond do
-        coordinate in moves ->
-          GenServer.cast :board, {:trace_complete, new_steps}
-        not end_cell ->
-          if cell_type == "T" do
-            GenServer.cast :board, {:teleport, new_steps}
-          else
-            neighbours
-            |> Enum.each(fn neighbour ->
-              GenServer.cast neighbour, {:solve, new_steps}
-            end)
-          end
-
-          Process.sleep(1)
-          GenServer.cast :board, {:trace_complete, new_steps}
-        end_cell ->
-          GenServer.cast :board, {:solved, new_steps}
-        true ->
-          # YOLO
-      end
-
-      new_state
-    else
-      GenServer.cast :board, {:trace_complete, new_steps}
-      state
-    end
+    new_state = state
+    |> Map.put(:least_cost, least_cost)
+    |> Map.put(:most_cost, most_cost)
 
     {:noreply, new_state}
   end
@@ -78,17 +43,6 @@ defmodule KnightsBoard.Cell do
   def handle_call {:set, :end}, _from, state do
     new_state = Map.put state, :end_cell, true
     {:reply, :ok, new_state}
-  end
-
-  def handle_call :get_cell_type, _from, state do
-    {:reply, :ok, state[:cell_type]}
-  end
-
-  defp cell_type_cost(cell_type) when cell_type == "." do
-    1
-  end
-  defp cell_type_cost(cell_type) when cell_type == "L" do
-    5
   end
 
   defp get_neighbours x, y, cell_type do

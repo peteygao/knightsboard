@@ -6,11 +6,15 @@ defmodule KnightsBoard.Board do
   path solver start/end points.
   """
 
-  def start_link board do
-    GenServer.start_link(__MODULE__, board, name: :board)
+  def start_link board, solution_logic, cell_propagation_logic do
+    GenServer.start_link(
+      __MODULE__,
+      [board, solution_logic, cell_propagation_logic],
+      name: :board
+    )
   end
 
-  def init board do
+  def init [board, solution_logic, cell_propagation_logic] do
     cells =
       board
       |> Enum.with_index
@@ -24,10 +28,18 @@ defmodule KnightsBoard.Board do
         y = div(index, board_width) + 1
         x = rem(index, board_width) + 1
 
-        Cell.start_link x, y, cell_type
+        {:ok, cell} = Cell.start_link x, y, cell_type, cell_propagation_logic
+        cell
       end)
 
-    {:ok, %{cells: cells, traces: 0, solutions: []}}
+    {:ok,
+      %{
+        cells: cells,
+        traces: 0,
+        solution: nil,
+        solution_logic: solution_logic,
+      }
+    }
   end
 
   def handle_cast {:solve, start_cell, end_cell}, state do
@@ -48,38 +60,49 @@ defmodule KnightsBoard.Board do
     {:noreply, state}
   end
 
-  def handle_cast {:trace_complete, %{cost: _, moves: moves}}, state do
+  def handle_cast {:trace_complete}, state do
     cond do
       state[:traces] > 1 ->
-        new_trace_count = state[:traces] - 1
-        new_state       = Map.put state, :traces, new_trace_count
+        new_state = state |> decrement_trace
+
         {:noreply, new_state}
-      true ->
-        IO.puts "***"
-        IO.puts state[:solutions] |> List.first |> Enum.reverse |> Enum.join(":")
+      state[:traces] == 1 and state[:solution] != nil ->
+        IO.puts "Solution:"
+        IO.puts state[:solution] |> Enum.reverse |> Enum.join(":")
+        state[:cells]
+        |> Enum.each(fn cell -> GenServer.stop(cell) end)
         IO.puts "Done! (trace complete)"
-        exit(:normal)
+        GenServer.stop(:board)
+      true ->
+        new_state = state |> decrement_trace
+
+        {:noreply, new_state}
     end
   end
 
-  def handle_cast {:solved, %{cost: _, moves: moves}}, state do
+  def handle_cast {:solved, steps}, state do
     new_trace_count = state[:traces] - 1
 
     new_state =
       state
-      |> Map.put(:solutions, [moves|state[:solutions]])
       |> Map.put(:traces, new_trace_count)
+      |> state[:solution_logic].(steps)
 
     {:noreply, new_state}
   end
 
-  def handle_call :increment_trace, _from, state do
+  def handle_cast :increment_trace, state do
     new_trace_count = state[:traces] + 1
     new_state       = Map.put state, :traces, new_trace_count
-    {:reply, :ok, new_state}
+    {:noreply, new_state}
   end
 
   def terminate reason, _state do
     IO.inspect reason
+  end
+
+  defp decrement_trace state do
+    new_trace_count = state[:traces] - 1
+    Map.put state, :traces, new_trace_count
   end
 end

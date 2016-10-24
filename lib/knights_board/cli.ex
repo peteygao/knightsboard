@@ -2,40 +2,38 @@ defmodule KnightsBoard.CLI do
   @help_message """
   Knight's Board Parallel Solver
 
-  This is a parallel solver for the Knight's Board problem, with a total of 5 levels.
+  This is a parallel solver for the Knight's Board problem, with a total of 4 levels.
 
-  All solutions with the exception of Level 1 are non-deterministic. Which means that the path returned may be different every time the application is invoked, but the path will always satisfy the constraint (e.g. shortest, longest, or any valid path). The reason for this behaviour is because the solver runs in parallel, the first solution that satisfies the constraint will be returned, and there's no guarantee the same path will be found first every run.
+  All solutions with the exception of Level 1 is non-deterministic. Which means that the path returned may be different every time the application is invoked, but the path will always satisfy the constraint (i.e. shortest or longest). The reason for this behaviour is because the solver runs in parallel, the first solution that satisfies the constraint will be returned, and there's no guarantee the same path will be found first every run.
 
   --level -l\tLevel of the Knight's Board to solve for:
             \t Level 1:
             \t  Test if all the --moves parameter are a valid string of Knight moves
             \t Level 2:
-            \t  Returns any path from start to end coordinates. Highly likely be the shortest by virtue of the fact that shortest paths computes the fastest
-            \t Level 3:
             \t  Returns a shortest path from start to end
-            \t Level 4:
+            \t Level 3:
             \t  Returns a shortest path from start to end on a special 32x32 board (see --board)
-            \t Level 5:
-            \t  Returns the longest path from start to end on the level 4 board
+            \t Level 4:
+            \t  Returns the longest path from start to end on a special 32x32 board (see --board)
 
   --moves -m\tMove set of the knight (level 1 has special rules, see below)
             \tTo specify start/end grids, use the format:
             \t  3,2:4,4
             \tWhere 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid
 
-            \tBoard dimensions for levels 1 - 3 are 8x8. Levels 4 and 5 are 32x32 (see --board)
+            \tBoard dimensions for levels 1 and 2 are 8x8. Levels 3 and 4 are 32x32 (see --board)
 
             \tSpecial Rules for Level 1:
             \tA chain of moves can be given in the same format, with each move being colon delimited:
             \t  3,2:4,4:5,6
 
-  --board -b\tShows the 32x32 board used for level 4 and 5
+  --board -b\tShows the 32x32 board used for level 3 and 4
 
   --help -h \tThis help message
   """
 
   @board """
-  **** Special board rules (for level 4 and 5) ****
+  **** Special board rules (for level 3 and 4) ****
 
   1) W[ater] squares count as two moves when a piece lands there
   2) R[ock] squares cannot be used
