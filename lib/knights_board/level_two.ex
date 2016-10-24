@@ -89,14 +89,9 @@ defmodule KnightsBoard.LevelTwo do
   do
     new_steps = new_steps_from steps, cell_state
 
-    cond do
-      coordinate in moves ->
-        GenServer.cast :board, {:trace_complete}
-      true ->
-        cast_to_neighbours neighbours
-
-        GenServer.cast :board, {:trace_complete}
-    end
+    with :ok <- should_cast?(steps, cell_state),
+    do: cast_to(neighbours, new_steps)
+    GenServer.cast :board, {:trace_complete}
 
     %{least_cost: new_steps[:cost], most_cost: nil}
   end
@@ -115,13 +110,9 @@ defmodule KnightsBoard.LevelTwo do
   do
     new_steps = new_steps_from steps, cell_state
 
-    cond do
-      coordinate in moves ->
-        GenServer.cast :board, {:trace_complete}
-      true ->
-        cast_to_neighbours neighbours
-        GenServer.cast :board, {:trace_complete}
-    end
+    with :ok <- should_cast?(steps, cell_state),
+    do: cast_to(neighbours, new_steps)
+    GenServer.cast :board, {:trace_complete}
 
     %{least_cost: new_steps[:cost], most_cost: nil}
   end
@@ -142,7 +133,16 @@ defmodule KnightsBoard.LevelTwo do
     %{cost: new_cost, moves: new_moves}
   end
 
-  defp cast_to_neighbours neighbours do
+  defp should_cast? %{moves: moves}, %{coordinate: coordinate} do
+    cond do
+      coordinate in moves ->
+        :no_cast
+      true ->
+        :ok
+    end
+  end
+
+  defp cast_to neighbours, new_steps do
     neighbours
     |> Enum.each(fn neighbour ->
       GenServer.cast neighbour, {:solve, new_steps}
