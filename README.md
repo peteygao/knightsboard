@@ -54,7 +54,7 @@ Some example invocations:
             A chain of moves can be given in the same format, with each move being colon delimited:
               3,2:4,4:5,6
 
---board -b  Shows the 32x32 board used for level 4 and 5
+--board -b  Shows the 32x32 board used for level 3 and 4
 
 --help -h   This help message
 ```
