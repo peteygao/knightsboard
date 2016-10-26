@@ -1,18 +1,23 @@
 defmodule KnightsBoard.Cell do
+  @moduledoc """
+  Represent each chess board cell as a GenServer process.
+  """
+
+  import KnightsBoard.Utilities
   use GenServer
 
-  def start_link x, y, cell_type, cell_propagation_logic do
+  def start_link x, y, cell_type, cell_propagation_logic, get_neighbours do
     GenServer.start_link(
       __MODULE__,
-      [x, y, cell_type, cell_propagation_logic],
+      [x, y, cell_type, cell_propagation_logic, get_neighbours],
       name: [x, y] |> to_coord_atom
     )
   end
 
-  def init [x, y, cell_type, cell_propagation_logic] do
+  def init [x, y, cell_type, cell_propagation_logic, get_neighbours] do
     state = %{
       coordinate: [x, y] |> to_coord_atom,
-      neighbours: get_neighbours(x, y, cell_type),
+      neighbours: get_neighbours.(x, y, cell_type),
       cell_type:  cell_type,
       least_cost: nil,
       most_cost:  nil,
@@ -43,23 +48,5 @@ defmodule KnightsBoard.Cell do
   def handle_call {:set, :end}, _from, state do
     new_state = Map.put state, :end_cell, true
     {:reply, :ok, new_state}
-  end
-
-  defp get_neighbours x, y, cell_type do
-    cond do
-      cell_type == "." or cell_type == "W" or cell_type == "L" ->
-        [
-          [x - 2, y - 1 ], [x - 1, y - 2], [x + 1, y - 2], [x + 2, y - 1 ],
-          [x - 2, y + 1 ], [x - 1, y + 2], [x + 1, y + 2], [x + 2, y + 1 ],
-        ] |> Enum.map(&to_coord_atom/1)
-      cell_type == "R" or cell_type == "B" or cell_type == "T" ->
-        []
-    end
-  end
-
-  defp to_coord_atom coordinate do
-    coordinate
-    |> Enum.join("x")
-    |> String.to_atom
   end
 end

@@ -1,20 +1,20 @@
 defmodule KnightsBoard.Board do
-  alias KnightsBoard.Cell, as: Cell
-
-  @doc """
-  Reponsible for initializing all the cells and controls the
-  path solver start/end points.
+  @moduledoc """
+  Reponsible for initializing all the cells and controls the path solver start/end points.
   """
 
-  def start_link board, solution_logic, cell_propagation_logic do
+  import KnightsBoard.Utilities
+  alias KnightsBoard.Cell, as: Cell
+
+  def start_link(board, solution_logic, cell_propagation_logic, get_neighbours \\ &default_get_neighbours/3) do
     GenServer.start_link(
       __MODULE__,
-      [board, solution_logic, cell_propagation_logic],
+      [board, solution_logic, cell_propagation_logic, get_neighbours],
       name: :board
     )
   end
 
-  def init [board, solution_logic, cell_propagation_logic] do
+  def init [board, solution_logic, cell_propagation_logic, get_neighbours] do
     cells =
       board
       |> Enum.with_index
@@ -28,7 +28,7 @@ defmodule KnightsBoard.Board do
         y = div(index, board_width) + 1
         x = rem(index, board_width) + 1
 
-        {:ok, cell} = Cell.start_link x, y, cell_type, cell_propagation_logic
+        {:ok, cell} = Cell.start_link x, y, cell_type, cell_propagation_logic, get_neighbours
         cell
       end)
 
@@ -104,5 +104,12 @@ defmodule KnightsBoard.Board do
   defp decrement_trace state do
     new_trace_count = state[:traces] - 1
     Map.put state, :traces, new_trace_count
+  end
+
+  defp default_get_neighbours x, y, _cell_type do
+    [
+      [x - 2, y - 1 ], [x - 1, y - 2], [x + 1, y - 2], [x + 2, y - 1 ],
+      [x - 2, y + 1 ], [x - 1, y + 2], [x + 1, y + 2], [x + 2, y + 1 ],
+    ] |> Enum.map(&to_coord_atom/1)
   end
 end

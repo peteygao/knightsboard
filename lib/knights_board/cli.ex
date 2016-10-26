@@ -123,6 +123,9 @@ defmodule KnightsBoard.CLI do
       2 ->
         import KnightsBoard.LevelTwo
         solve(moves)
+      3 ->
+        import KnightsBoard.LevelThree
+        solve(moves)
     end
   end
   defp initialize_board(_, _) do
