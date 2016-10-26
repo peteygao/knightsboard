@@ -7,10 +7,10 @@ defmodule KnightsBoard.LevelThree do
   use KnightsBoard.Constants
 
   def solve([[sx, sy], [ex, ey]]) when
-    sx < 1 or sx > 32 or
-    sy < 1 or sy > 28 or
-    ex < 1 or ex > 32 or
-    ey < 1 or ey > 28
+    sx < 1 or 32 < sx or
+    sy < 1 or 28 < sy or
+    ex < 1 or 32 < ex or
+    ey < 1 or 28 < ey
   do
     IO.puts [
       "Invalid start or end position: ",

@@ -12,22 +12,22 @@ defmodule KnightsBoard.CLI do
             \t Level 2:
             \t  Returns a shortest path from start to end
             \t Level 3:
-            \t  Returns a shortest path from start to end on a special 32x32 board (see --board)
+            \t  Returns a shortest path from start to end on a special 32x28 board (see --board)
             \t Level 4:
-            \t  Returns the longest path from start to end on a special 32x32 board (see --board)
+            \t  Returns the longest path from start to end on a special 32x28 board (see --board)
 
   --moves -m\tMove set of the knight (level 1 has special rules, see below)
             \tTo specify start/end grids, use the format:
             \t  3,2:4,4
             \tWhere 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid
 
-            \tBoard dimensions for levels 1 and 2 are 8x8. Levels 3 and 4 are 32x32 (see --board)
+            \tBoard dimensions for levels 1 and 2 are 8x8. Levels 3 and 4 are 32x28 (see --board)
 
             \tSpecial Rules for Level 1:
             \tA chain of moves can be given in the same format, with each move being colon delimited:
             \t  3,2:4,4:5,6
 
-  --board -b\tShows the 32x32 board used for level 3 and 4
+  --board -b\tShows the 32x28 used for level 3 and 4
 
   --help -h \tThis help message
   """

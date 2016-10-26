@@ -39,22 +39,22 @@ Some example invocations:
              Level 2:
               Returns a shortest path from start to end (if possible)
              Level 3:
-              Returns a shortest path from start to end on a special 32x32 (see --board)
+              Returns a shortest path from start to end on a special 32x28 (see --board)
              Level 4:
-              Returns the longest path from start to end on a special 32x32 (see --board)
+              Returns the longest path from start to end on a special 32x28 (see --board)
 
 --moves -m  Move set of the knight (level 1 has special rules, see below)
             To specify start/end grids, use the format:
               3,2:4,4
             Where 3,2 is the coordinate representing the start grid and 4,4 is the grid representing the end grid
 
-            Board dimensions for levels 1 and 2 are 8x8. Levels 3 and 4 are 32x32 (see --board)
+            Board dimensions for levels 1 and 2 are 8x8. Levels 3 and 4 are 32x28 (see --board)
 
             Special Rules for Level 1:
             A chain of moves can be given in the same format, with each move being colon delimited:
               3,2:4,4:5,6
 
---board -b  Shows the 32x32 board used for level 3 and 4
+--board -b  Shows the 32x28 board used for level 3 and 4
 
 --help -h   This help message
 ```
