@@ -8,6 +8,7 @@ defmodule KnightsBoard.LevelThree do
 
   @board_width 32
   @board_height 28
+  @propagatable_cell_types [".", "W", "L", "T"]
 
   def solve([[sx, sy], [ex, ey]]) when
     sx < 1 or @board_width < sx or
@@ -153,35 +154,13 @@ defmodule KnightsBoard.LevelThree do
       Enum.all?(x..target_x, fn traverse_x ->
         traverse_cell = Enum.at(@special_board, y * @board_width + traverse_x)
 
-        case traverse_cell do
-          "." ->
-            true
-          "W" ->
-            true
-          "L" ->
-            true
-          "T" ->
-            true
-          _ ->
-            false
-        end
+        traverse_cell in @propagatable_cell_types
       end)
     else
       Enum.all?(y..target_y, fn traverse_y ->
         traverse_cell = Enum.at(@special_board, traverse_y * @board_width + x)
 
-        case traverse_cell do
-          "." ->
-            true
-          "W" ->
-            true
-          "L" ->
-            true
-          "T" ->
-            true
-          _ ->
-            false
-        end
+        traverse_cell in @propagatable_cell_types
       end)
     end
   end
