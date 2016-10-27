@@ -49,4 +49,8 @@ defmodule KnightsBoard.Cell do
     new_state = Map.put state, :end_cell, true
     {:reply, :ok, new_state}
   end
+
+  def handle_call :status, _from, state do
+    {:reply, state[:neighbours], state}
+  end
 end

@@ -6,11 +6,14 @@ defmodule KnightsBoard.LevelThree do
   import KnightsBoard.Utilities
   use KnightsBoard.Constants
 
+  @board_width 32
+  @board_height 28
+
   def solve([[sx, sy], [ex, ey]]) when
-    sx < 1 or 32 < sx or
-    sy < 1 or 28 < sy or
-    ex < 1 or 32 < ex or
-    ey < 1 or 28 < ey
+    sx < 1 or @board_width < sx or
+    sy < 1 or @board_height < sy or
+    ex < 1 or @board_width < ex or
+    ey < 1 or @board_height < ey
   do
     IO.puts [
       "Invalid start or end position: ",
@@ -25,6 +28,7 @@ defmodule KnightsBoard.LevelThree do
     {:ok, board} =
       KnightsBoard.Board.start_link(
         @special_board,
+        @board_width,
         &solution_logic/2,
         &cell_propagation_logic/2,
         &get_neighbours/3
@@ -134,14 +138,20 @@ defmodule KnightsBoard.LevelThree do
   end
 
   defp valid_coordinate? [target_x, target_y] do
-    0 < target_x and target_x <= 32 and
-    0 < target_y and target_y <= 28
+    0 < target_x and target_x <= @board_width and
+    0 < target_y and target_y <= @board_width
   end
 
   defp valid_move? x, y, target_x, target_y do
+    # Adjust all coordinate by -1 because cell coordinates are 1 indexed, not 0 indexed
+    x = x-1
+    y = y-1
+    target_x = target_x-1
+    target_y = target_y-1
+
     if abs(x - target_x) > abs(y - target_y) do
       Enum.all?(x..target_x, fn traverse_x ->
-        traverse_cell = Enum.at(@special_board, y * 32 + traverse_x)
+        traverse_cell = Enum.at(@special_board, y * @board_width + traverse_x)
 
         case traverse_cell do
           "." ->
@@ -149,6 +159,8 @@ defmodule KnightsBoard.LevelThree do
           "W" ->
             true
           "L" ->
+            true
+          "T" ->
             true
           _ ->
             false
@@ -156,7 +168,7 @@ defmodule KnightsBoard.LevelThree do
       end)
     else
       Enum.all?(y..target_y, fn traverse_y ->
-        traverse_cell = Enum.at(@special_board, traverse_y * 32 + x)
+        traverse_cell = Enum.at(@special_board, traverse_y * @board_width + x)
 
         case traverse_cell do
           "." ->
@@ -164,6 +176,8 @@ defmodule KnightsBoard.LevelThree do
           "W" ->
             true
           "L" ->
+            true
+          "T" ->
             true
           _ ->
             false

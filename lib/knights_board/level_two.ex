@@ -25,6 +25,7 @@ defmodule KnightsBoard.LevelTwo do
     {:ok, board} =
       KnightsBoard.Board.start_link(
         @board,
+        8,
         &solution_logic/2,
         &cell_propagation_logic/2
       )
@@ -72,9 +73,8 @@ defmodule KnightsBoard.LevelTwo do
   end
 
   defp cell_propagation_logic(
-    %{cost: _cost, moves: moves} = steps,
+    steps,
     %{
-      coordinate: coordinate,
       least_cost: least_cost,
       neighbours: neighbours,
     } = cell_state)
@@ -91,9 +91,8 @@ defmodule KnightsBoard.LevelTwo do
   end
 
   defp cell_propagation_logic(
-    %{cost: cost, moves: moves} = steps,
+    %{cost: cost} = steps,
     %{
-      coordinate: coordinate,
       least_cost: least_cost,
       neighbours: neighbours,
     } = cell_state)
