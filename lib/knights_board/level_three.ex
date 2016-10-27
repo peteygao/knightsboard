@@ -152,15 +152,15 @@ defmodule KnightsBoard.LevelThree do
 
     if abs(x - target_x) > abs(y - target_y) do
       Enum.all?(x..target_x, fn traverse_x ->
-        traverse_cell = Enum.at(@special_board, y * @board_width + traverse_x)
+        cell_type = Enum.at(@special_board, y * @board_width + traverse_x)
 
-        traverse_cell in @propagatable_cell_types
+        cell_type in @propagatable_cell_types
       end)
     else
       Enum.all?(y..target_y, fn traverse_y ->
-        traverse_cell = Enum.at(@special_board, traverse_y * @board_width + x)
+        cell_type = Enum.at(@special_board, traverse_y * @board_width + x)
 
-        traverse_cell in @propagatable_cell_types
+        cell_type in @propagatable_cell_types
       end)
     end
   end
