@@ -6,7 +6,13 @@ defmodule KnightsBoard.Board do
   import KnightsBoard.Utilities
   alias KnightsBoard.Cell, as: Cell
 
-  def start_link(board, board_width, solution_logic, cell_propagation_logic, get_neighbours \\ &default_get_neighbours/3) do
+  def start_link(
+    board,
+    board_width,
+    solution_logic,
+    cell_propagation_logic,
+    get_neighbours \\ &default_get_neighbours/3
+  ) do
     GenServer.start_link(
       __MODULE__,
       [board, board_width, solution_logic, cell_propagation_logic, get_neighbours],
@@ -14,7 +20,15 @@ defmodule KnightsBoard.Board do
     )
   end
 
-  def init [board, board_width, solution_logic, cell_propagation_logic, get_neighbours] do
+  def init(
+    [
+      board,
+      board_width,
+      solution_logic,
+      cell_propagation_logic,
+      get_neighbours
+    ]
+  ) do
     cells =
       board
       |> Enum.with_index
@@ -22,7 +36,9 @@ defmodule KnightsBoard.Board do
         y = div(index, board_width) + 1
         x = rem(index, board_width) + 1
 
-        {:ok, cell} = Cell.start_link x, y, cell_type, cell_propagation_logic, get_neighbours
+        {:ok, cell} =
+          Cell.start_link x, y, cell_type, cell_propagation_logic, get_neighbours
+
         cell
       end)
 

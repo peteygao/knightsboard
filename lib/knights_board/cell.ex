@@ -28,10 +28,14 @@ defmodule KnightsBoard.Cell do
     {:ok, state}
   end
 
-  def handle_cast({:solve, steps}, %{cell_propagation_logic: cell_propagation_logic} = state) do
+  def handle_cast(
+    {:solve, steps},
+    %{cell_propagation_logic: cell_propagation_logic} = state
+  ) do
     GenServer.cast :board, :increment_trace
 
-    %{least_cost: least_cost, most_cost: most_cost} = cell_propagation_logic.(steps, state)
+    %{least_cost: least_cost, most_cost: most_cost} =
+      cell_propagation_logic.(steps, state)
 
     new_state = state
     |> Map.put(:least_cost, least_cost)
